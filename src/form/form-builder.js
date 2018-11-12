@@ -89,7 +89,7 @@ export default class FormBuilder extends Form {
     return {
       component: 'Form',
       fields: this.get('fields.form.form.fields.fields').mapForms(form => ({
-        ...form.getValues(),
+        ...form.getValues({ default: false }),
         component: form.getValue('componentName'),
         componentName: undefined
       }))

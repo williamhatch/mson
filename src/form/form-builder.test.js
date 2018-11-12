@@ -25,31 +25,33 @@ const mson = {
   ]
 };
 
-const values = {
+const getValues = withDefaults => ({
   form: {
     fields: [
       {
+        id: withDefaults ? 1 : undefined,
         name: 'firstName',
         componentName: 'TextField',
         label: 'First Name'
       },
       {
+        id: withDefaults ? 2 : undefined,
         name: 'birthday',
         componentName: 'DateField',
         label: 'Birthday'
       }
     ]
   }
-};
+});
 
 it('should set mson', () => {
   builder.set({ mson });
-  expect(builder.getValues()).toEqual(values);
+  expect(builder.getValues()).toEqual(getValues(false));
 });
 
 it('should get mson', () => {
   expect(builder.get('mson')).toEqual({ component: 'Form', fields: [] });
 
-  builder.setValues(values);
+  builder.setValues(getValues(true));
   expect(builder.get('mson')).toEqual(mson);
 });
