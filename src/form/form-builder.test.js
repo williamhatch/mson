@@ -3,28 +3,30 @@ import FormBuilder from './form-builder';
 // Note: this is needed so that FieldEditorForm has a reference to the compiler
 import '../compiler';
 
-it('should set via mson', () => {
-  const builder = new FormBuilder();
+let builder = null;
 
-  builder.set({
-    mson: {
-      component: 'Form',
-      fields: [
-        {
-          name: 'firstName',
-          component: 'TextField',
-          label: 'First Name'
-        },
-        {
-          name: 'birthday',
-          component: 'DateField',
-          label: 'Birthday'
-        }
-      ]
+beforeEach(() => {
+  builder = new FormBuilder();
+});
+
+const mson = {
+  component: 'Form',
+  fields: [
+    {
+      name: 'firstName',
+      component: 'TextField',
+      label: 'First Name'
+    },
+    {
+      name: 'birthday',
+      component: 'DateField',
+      label: 'Birthday'
     }
-  });
+  ]
+};
 
-  expect(builder.get('fields.form.form.value')).toEqual({
+const values = {
+  form: {
     fields: [
       {
         name: 'firstName',
@@ -37,5 +39,17 @@ it('should set via mson', () => {
         label: 'Birthday'
       }
     ]
-  });
+  }
+};
+
+it('should set mson', () => {
+  builder.set({ mson });
+  expect(builder.getValues()).toEqual(values);
+});
+
+it('should get mson', () => {
+  expect(builder.get('mson')).toEqual({ component: 'Form', fields: [] });
+
+  builder.setValues(values);
+  expect(builder.get('mson')).toEqual(mson);
 });

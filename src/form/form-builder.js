@@ -84,4 +84,23 @@ export default class FormBuilder extends Form {
       this._setMSON(props.mson);
     }
   }
+
+  _getMSON() {
+    return {
+      component: 'Form',
+      fields: this.get('fields.form.form.fields.fields').mapForms(form => ({
+        ...form.getValues(),
+        component: form.getValue('componentName'),
+        componentName: undefined
+      }))
+    };
+  }
+
+  getOne(name) {
+    if (name === 'mson') {
+      return this._getMSON();
+    }
+
+    return super.getOne(name);
+  }
 }
