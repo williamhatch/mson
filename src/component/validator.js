@@ -1,48 +1,16 @@
 import each from 'lodash/each';
 import cloneDeep from 'lodash/cloneDeep';
 import sift from 'sift';
+import PropFiller from '../compiler/prop-filler';
 
 export default class Validator {
   constructor(props) {
     this._props = props;
-  }
-
-  _getTemplateName(str) {
-    let matches = str.match(/^{{([^{]*)}}$/);
-    if (matches) {
-      return matches[1];
-    }
-  }
-
-  _getProp(name) {
-    let names = name.split('.');
-    if (names.length === 1) {
-      return this._props[name];
-    } else {
-      let value = this._props[names[0]];
-      for (let i = 1; i < names.length; i++) {
-        // Value can be falsy if the field was removed and a validator still references the field.
-        // TODO: is this durability the best way of handling broken validators when fields are
-        // removed?
-        if (value) {
-          value = value[names[i]];
-        }
-      }
-      return value;
-    }
+    this._propFiller = new PropFiller(props);
   }
 
   _fillProps(str) {
-    // Is the string just a template string?
-    let name = this._getTemplateName(str);
-    if (name !== undefined) {
-      // Replace with the raw prop so that numbers are not converted to strings by replace()
-      return this._getProp(name);
-    } else {
-      return str.replace(/{{([^{]*)}}/g, (match, name) => {
-        return this._getProp(name);
-      });
-    }
+    return this._propFiller.fillString(str);
   }
 
   // Performs in place fill to prepare for sift query

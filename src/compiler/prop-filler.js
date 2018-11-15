@@ -1,4 +1,3 @@
-// TODO: use in validator as well?
 // TODO: move from compiler directory as used by multiple modules
 
 import cloneDeepWith from 'lodash/cloneDeepWith';
