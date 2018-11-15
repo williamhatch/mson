@@ -21,22 +21,32 @@ export default class PropFiller {
     }
   }
 
-  _getProp(name) {
-    let names = name.split('.');
-    if (names.length === 1) {
-      return this._props[name];
-    } else {
-      try {
-        let value = this._props[names[0]];
-        for (let i = 1; i < names.length; i++) {
-          value = value[names[i]];
-        }
-        return value;
-      } catch (err) {
-        // This can occur when there is no nested value in props
-        return undefined;
+  _getPropFromObj(obj, name) {
+    try {
+      let names = name.split('.');
+      let nestedObj;
+
+      // Getter?
+      if (obj.get && typeof obj.get === 'function') {
+        nestedObj = obj.get(names[0]);
+      } else {
+        nestedObj = obj[names[0]];
       }
+
+      if (names.length > 1) {
+        names.shift(); // remove 1st name
+        return this._getPropFromObj(nestedObj, names.join('.'));
+      } else {
+        return nestedObj;
+      }
+    } catch (err) {
+      // This can occur when there is no nested value in props
+      return undefined;
     }
+  }
+
+  _getProp(name) {
+    return this._getPropFromObj(this._props, name);
   }
 
   // We leave the original template parameter strings intact if there isn't a match as the template
