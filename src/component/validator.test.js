@@ -1,28 +1,5 @@
 import Validator from './validator';
 
-it('should get template names', () => {
-  let validator = new Validator();
-  expect(validator._getTemplateName('{{foo}}')).toEqual('foo');
-  expect(validator._getTemplateName('{{foo}} ')).toEqual(undefined);
-  expect(validator._getTemplateName(' {{foo}} ')).toEqual(undefined);
-  expect(validator._getTemplateName('foo')).toEqual(undefined);
-});
-
-it('should get props', () => {
-  let validator = new Validator({
-    foo: 'bar',
-    value: {
-      name: {
-        firstName: 'Jane',
-        lastName: 'Doe'
-      }
-    }
-  });
-
-  expect(validator._getProp('foo')).toEqual('bar');
-  expect(validator._getProp('value.name.firstName')).toEqual('Jane');
-});
-
 it('should fill props', () => {
   let validator = new Validator({
     foo: 'bar',
