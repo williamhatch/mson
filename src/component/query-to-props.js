@@ -1,5 +1,6 @@
 import forEach from 'lodash/forEach';
 import set from 'lodash/set';
+import PropertyNotDefinedError from './property-not-defined-error';
 
 export const queryToPropNames = (query, names, parentName) => {
   if (query !== null && typeof query === 'object') {
@@ -35,7 +36,15 @@ const queryToProps = (query, component) => {
   queryToPropNames(query, names);
 
   forEach(names, (value, name) => {
-    set(props, name, component.get(name));
+    try {
+      set(props, name, component.get(name));
+    } catch (err) {
+      // Swallow the error if the property is not defined. This allows us to do things like ignore
+      // outdated filters, e.g. a filter for a property, which has since been deleted.
+      if (!(err instanceof PropertyNotDefinedError)) {
+        throw err;
+      }
+    }
   });
 
   return props;

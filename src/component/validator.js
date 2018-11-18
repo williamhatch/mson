@@ -2,6 +2,7 @@ import each from 'lodash/each';
 import cloneDeep from 'lodash/cloneDeep';
 import sift from 'sift';
 import PropFiller from '../compiler/prop-filler';
+import queryToProps from '../component/query-to-props';
 
 export default class Validator {
   constructor(props) {
@@ -35,6 +36,12 @@ export default class Validator {
     }
   }
 
+  _getWhereProps(where) {
+    // queryToProps() resolves all the properties in the query. This allows us to dynamically query
+    // data in deeply nested components.
+    return queryToProps(where, this._props);
+  }
+
   _validateWithRule(rule) {
     // Clone where as we will be modifying the leaf nodes
     let where = cloneDeep(rule.where);
@@ -42,8 +49,11 @@ export default class Validator {
     // Fill the props
     this._fillWhere(where);
 
+    // Resolve the properties targeted in our filter
+    const whereProps = this._getWhereProps(where);
+
     // Validation failed?
-    let sifted = sift(where, [this._props]);
+    let sifted = sift(where, [whereProps]);
     if (sifted.length > 0) {
       return this._fillErrorProps(rule.error);
     }
