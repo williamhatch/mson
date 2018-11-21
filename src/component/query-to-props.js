@@ -22,6 +22,12 @@ export const queryToPropNames = (query, names, parentName) => {
   }
 };
 
+export const throwIfNotPropertyNotDefinedError = err => {
+  if (!(err instanceof PropertyNotDefinedError)) {
+    throw err;
+  }
+};
+
 // We analyze the MongoDB-style query to dynamically extract the properties from the component,
 // including properties in deeply nested components. A previous design called get() on the
 // components to return the values, but that does not always provide access to deeply nested
@@ -41,9 +47,7 @@ const queryToProps = (query, component) => {
     } catch (err) {
       // Swallow the error if the property is not defined. This allows us to do things like ignore
       // outdated filters, e.g. a filter for a property, which has since been deleted.
-      if (!(err instanceof PropertyNotDefinedError)) {
-        throw err;
-      }
+      throwIfNotPropertyNotDefinedError(err);
     }
   });
 
