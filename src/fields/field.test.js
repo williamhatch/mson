@@ -107,3 +107,23 @@ it('should identify as field', () => {
   const field = new Field();
   expect(field.isField()).toEqual(true);
 });
+
+it('should validate with validators', () => {
+  const field = new Field({
+    validators: [
+      {
+        where: {
+          value: 'foo'
+        },
+        error: 'invalid'
+      }
+    ]
+  });
+
+  field.validate();
+  expect(field.hasErr()).toEqual(false);
+
+  field.setValue('foo');
+  field.validate();
+  expect(field.getErr()).toEqual('invalid');
+});
