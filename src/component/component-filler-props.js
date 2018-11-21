@@ -80,12 +80,6 @@ export default class ComponentFillerProps {
     };
   }
 
-  _formToFillerProps(component) {
-    const fields = {};
-    component.eachField(field => (fields[field.get('name')] = field.get()));
-    return fields;
-  }
-
   getFillerProps(props) {
     // Wrap in a Getter so that we expose a single get() to PropFiller
     return new Getter({
