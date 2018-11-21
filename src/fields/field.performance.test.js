@@ -1,5 +1,7 @@
 import testUtils from '../test-utils';
 import Field from './field';
+import Form from '../form';
+import compiler from '../compiler';
 
 const NUM_FIELDS = 300;
 
