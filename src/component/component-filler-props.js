@@ -14,24 +14,46 @@ export class Getter {
   get(name) {
     const names = name.split('.');
     const firstName = names[0];
+    let item;
+    let isComponent = false;
+
     switch (firstName) {
       case 'action':
-        return this._action ? this._action.get(name) : undefined;
+        item = this._action;
+        break;
 
       case 'arguments':
-        if (names.length > 1) {
-          names.shift(); // remove first name
-          return this._args ? get(this._args, names.join('.')) : undefined;
-        } else {
-          return this._args;
-        }
+        item = this._args;
+        break;
 
       case 'globals':
-        names.shift(); // remove first name
-        return this._globals ? get(this._globals, names.join('.')) : undefined;
+        item = this._globals;
+        break;
 
       default:
-        return this._component ? this._component.get(name) : undefined;
+        isComponent = true;
+        item = this._component;
+        break;
+    }
+
+    if (item === undefined) {
+      return undefined;
+    } else if (names.length > 1 || isComponent) {
+      let childName = name;
+      if (!isComponent) {
+        names.shift(); // remove first name
+        childName = names.join('.');
+      }
+
+      // Is the item a getter?
+      if (item.get && typeof item.get === 'function') {
+        return item.get(childName);
+      } else {
+        // Item is an object
+        return get(item, childName);
+      }
+    } else {
+      return item;
     }
   }
 }

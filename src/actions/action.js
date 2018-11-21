@@ -65,7 +65,7 @@ export default class Action extends Component {
 
   _getFilled(names) {
     let prop = super.get(names);
-    return this._fill(prop);
+    return prop === undefined ? undefined : this._fill(prop);
   }
 
   get(names) {
